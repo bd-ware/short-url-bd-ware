@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium URL Shortener</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="bg-white shadow-md rounded-lg p-8 max-w-lg w-full">
+            <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Shorten Your URL</h1>
+            <form id="shortenForm" class="space-y-4">
+                <div>
+                    <input 
+                        type="url" 
+                        id="originalUrl" 
+                        placeholder="Enter your URL here" 
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-200 outline-none"
+                        required
+                    />
+                </div>
+                <button 
+                    type="submit" 
+                    class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition">
+                    Shorten URL
+                </button>
+            </form>
+            <div id="result" class="mt-6 text-center hidden">
+                <p class="text-gray-600">Shortened URL:</p>
+                <a id="shortenedLink" href="#" target="_blank" class="text-blue-500 font-semibold"></a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://gkehfjzvivfcembymdag.supabase.co'; // Replace with your Supabase Project URL
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdrZWhmanp2aXZmY2VtYnltZGFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzExMzczMDMsImV4cCI6MjA0NjcxMzMwM30.ACOKHvN8jvY97apIKX5AyJ_wJFnCCy39Y-r8KjmZFBI'; // Replace with your Supabase Anon Key
+
+        document.getElementById('shortenForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const originalUrl = document.getElementById('originalUrl').value;
+            const shortCode = Math.random().toString(36).substr(2, 6);
+
+            // Save to Supabase
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/urls`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                },
+                body: JSON.stringify({ original_url: originalUrl, short_code: shortCode })
+            });
+
+            if (response.ok) {
+                const shortenedLink = `${window.location.origin}/${shortCode}`;
+                document.getElementById('shortenedLink').href = shortenedLink;
+                document.getElementById('shortenedLink').innerText = shortenedLink;
+                document.getElementById('result').classList.remove('hidden');
+            } else {
+                alert('Failed to shorten URL. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>
