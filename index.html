@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <h1 class="text-2xl font-semibold text-gray-800">Redirecting...</h1>
+    <script>
+        const SUPABASE_URL = 'https://gkehfjzvivfcembymdag.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdrZWhmanp2aXZmY2VtYnltZGFnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzExMzczMDMsImV4cCI6MjA0NjcxMzMwM30.ACOKHvN8jvY97apIKX5AyJ_wJFnCCy39Y-r8KjmZFBI';
+
+        (async () => {
+            const shortCode = window.location.pathname.replace('/', '');
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/urls?short_code=eq.${shortCode}`, {
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                }
+            });
+
+            const data = await response.json();
+            if (data.length > 0) {
+                window.location.href = data[0].original_url;
+            } else {
+                document.body.innerHTML = '<h1 class="text-xl text-red-600">URL not found!</h1>';
+            }
+        })();
+    </script>
+</body>
+</html>
